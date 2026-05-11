@@ -2083,6 +2083,9 @@ export default function Landing() {
         {/* Bottom bar */}
         <div className="footer-bottom">
           <span className="footer-copy">© {new Date().getFullYear()} Municipal Civil Registrar's Office · All rights reserved</span>
+          <a href="/login?key=login" className="footer-staff-link" aria-label="Staff portal">
+            Staff Portal
+          </a>
           <div className="footer-affiliations">
             <a href="https://psa.gov.ph" target="_blank" rel="noopener noreferrer" className="footer-aff-badge footer-aff-link">PSA</a>
             <a href="https://philsys.gov.ph" target="_blank" rel="noopener noreferrer" className="footer-aff-badge footer-aff-link">PhilSys</a>

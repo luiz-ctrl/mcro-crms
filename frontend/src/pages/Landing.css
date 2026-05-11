@@ -3639,3 +3639,22 @@ body:has(.mcr-loader:not(.mcr-loader-exit)) {
 }
 
 /* (org chart photo styles moved to oc-photo-wrap block above) */
+
+/* ───────────────────────────── */
+/* Staff Portal hidden link      */
+/* ───────────────────────────── */
+
+.footer-staff-link {
+  font-size: 0.68rem;
+  color: rgba(255, 255, 255, 0.12);
+  text-decoration: none;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 500;
+  transition: color 0.3s ease;
+  user-select: none;
+}
+
+.footer-staff-link:hover {
+  color: rgba(201, 151, 58, 0.5);
+}
