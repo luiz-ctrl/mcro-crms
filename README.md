@@ -31,39 +31,6 @@ Or use the Neon SQL editor to paste and run `db/init.sql`.
 ```bash
 npm install -g vercel
 vercel --prod
-```
-
-### 3. Set Environment Variables in Vercel Dashboard
-
-Go to: Project → Settings → Environment Variables
-
-| Variable | Value |
-|----------|-------|
-| `DATABASE_URL` | Your Neon PostgreSQL connection string |
-| `JWT_SECRET` | A strong random secret string |
-
----
-
-## 🔐 Default Admin Credentials
-
-After running `db/init.sql`:
-
-- **Email**: `admin@mcro-generaluna.gov.ph`  
-- **Password**: `Admin@2024`
-
-> ⚠️ Change this password immediately after first login by updating the bcrypt hash in the database.
-
-### To generate a new password hash:
-```bash
-node -e "const b=require('bcryptjs'); b.hash('YourNewPassword',10).then(h=>console.log(h))"
-```
-
-Then run:
-```sql
-UPDATE users SET password = '<hash>' WHERE email = 'admin@mcro-generaluna.gov.ph';
-```
-
----
 
 ## 📁 Project Structure
 
@@ -111,56 +78,3 @@ mcro-crms/
 ├── package.json                  # API dependencies
 ├── vercel.json                   # Vercel deployment config
 └── README.md
-```
-
----
-
-## 🧪 Local Development
-
-```bash
-# Install API dependencies
-npm install
-
-# Install frontend dependencies
-cd frontend && npm install
-
-# Start frontend dev server (proxies /api to localhost:3000)
-npm run dev
-```
-
-For local API testing, you'll need a local PostgreSQL or use `vercel dev`:
-```bash
-# Requires Vercel CLI
-vercel dev
-```
-
----
-
-## 📋 API Reference
-
-All API routes (except `/api/auth/login`) require:
-```
-Authorization: Bearer <token>
-```
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/auth/login` | Admin login |
-| GET | `/api/records` | List records (paginated, searchable) |
-| POST | `/api/records` | Create record |
-| PUT | `/api/records/:id` | Update record |
-| DELETE | `/api/records/:id` | Delete record |
-| GET | `/api/analytics/summary` | Dashboard totals |
-| GET | `/api/analytics/top-transactions` | Top types + monthly trend |
-| GET | `/api/analytics/status-distribution` | Status + sex breakdown |
-| GET | `/api/audit` | Paginated audit logs |
-
----
-
-## 🔒 Security Notes
-
-- All non-login API routes validate JWT on every request
-- Passwords stored as bcrypt hashes (cost factor 10)
-- All mutations logged to `audit_logs` table
-- JWT expires in 8 hours
-- CORS headers set on all endpoints
