@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+frontend/node_modules/
+
+# Build output
+dist/
+frontend/dist/
+*.tsbuildinfo
+
+# Environment & secrets (never commit real credentials)
+.env
+.env.*
+!.env.example
+
+# Vite
+frontend/.vite/
+
+# Logs & caches
+*.log
+npm-debug.log*
+.cache/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Vercel — ignore link metadata; dashboard manages project
+.vercel/
+
+# IDE (optional — remove if your team commits shared settings)
+.idea/
+*.swp
+*.swo

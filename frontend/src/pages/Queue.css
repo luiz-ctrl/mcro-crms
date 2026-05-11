@@ -1,0 +1,9 @@
+.queue-ticket-issued {
+  margin-top: 20px;
+  padding: 16px;
+  background: var(--gray-50);
+  border: 2px dashed var(--gray-200);
+  border-radius: var(--radius);
+  display: inline-block;
+  min-width: 140px;
+}

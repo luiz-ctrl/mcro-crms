@@ -1,0 +1,191 @@
+export const TRANSACTION_TYPES = [
+  'ON-TIME REGISTRATION OF BIRTH',
+  'ON-TIME REGISTRATION OF MARRIAGE',
+  'ON-TIME REGISTRATION OF DEATH',
+  'DELAYED REGISTRATION OF BIRTH',
+  'BRAP DELAYED REGISTRATION OF BIRTH',
+  'OUT-OF-TOWN DELAYED REGISTRATION OF BIRTH',
+  'RECEIVED OUT-OF-TOWN BIRTH REGISTRATION',
+  'DELAYED REGISTRATION OF MARRIAGE',
+  'DELAYED REGISTRATION OF DEATH',
+  'CTC OF BIRTH',
+  'CTC OF MARRIAGE',
+  'CTC OF DEATH',
+  'CRF 1A',
+  'CRF 2A',
+  'CRF 3A',
+  'CRF 1C',
+  'CRF 2C',
+  'CRF 3C',
+  'MARRIAGE APPLICANT',
+  'BREQS BIRTH - REQUEST',
+  'BREQS BIRTH - CLAIMED',
+  'BREQS MARRIAGE - REQUEST',
+  'BREQS MARRIAGE - CLAIMED',
+  'BREQS DEATH - REQUEST',
+  'BREQS DEATH - CLAIMED',
+  'BREQS CENOMAR - REQUEST',
+  'BREQS CENOMAR - CLAIMED',
+  'COURT DECREE',
+  'LEGITIMATION',
+  'R.A. 9048',
+  'MIGRANT PETITION',
+  'R.A. 10172',
+  'SUPPLEMENTAL',
+]
+
+export const BARANGAYS = [
+  'Barangay 1', 'Barangay 2', 'Barangay 3', 'Barangay 4', 'Barangay 5',
+  'Barangay 6', 'Barangay 7', 'Barangay 8', 'Barangay 9',
+  'Bacong Ibaba', 'Bacong Ilaya', 'Lavides', 'Magsaysay', 'Malaya',
+  'Nieva', 'Recto', 'San Ignacio Ibaba', 'San Ignacio Ilaya',
+  'San Isidro Ibaba', 'San Isidro Ilaya', 'San Jose', 'San Nicolas',
+  'San Vicente', 'Santa Maria Ibaba', 'Santa Maria Ilaya',
+  'Sumilang', 'Villarica', 'Outside Municipality',
+]
+
+export const STATUSES = ['Pending', 'Processing', 'Completed']
+
+export const PH_HOLIDAYS_2024_2025 = [
+  '2024-01-01','2024-02-10','2024-04-09','2024-04-10','2024-04-11',
+  '2024-05-01','2024-06-12','2024-08-21','2024-08-26','2024-11-01',
+  '2024-11-02','2024-11-30','2024-12-08','2024-12-24','2024-12-25',
+  '2024-12-30','2024-12-31',
+  '2025-01-01','2025-02-25','2025-04-09','2025-04-17','2025-04-18',
+  '2025-05-01','2025-06-12','2025-08-21','2025-08-25','2025-11-01',
+  '2025-11-02','2025-11-30','2025-12-08','2025-12-24','2025-12-25',
+  '2025-12-30','2025-12-31',
+]
+
+export const SERVICES = [
+  {
+    id: 'birth',
+    icon: '👶',
+    title: 'Birth Certificate',
+    types: ['On-Time Registration', 'Delayed Registration', 'Out-of-Town Registration', 'BRAP Delayed'],
+    requirements: [
+      'Duly accomplished Certificate of Live Birth (Municipal Form No. 102)',
+      'Affidavit of two disinterested persons (for delayed registration)',
+      'Baptismal certificate (if available)',
+      'School records (for delayed registration)',
+      'Marriage certificate of parents (if married)',
+    ],
+    fee: 'Free (Registration) / ₱50.00 per page (CTC/CRF)',
+    processing: 'Same Day',
+    color: '#4F7942',
+  },
+  {
+    id: 'marriage',
+    icon: '💍',
+    title: 'Marriage Certificate',
+    types: ['On-Time Registration', 'Delayed Registration', 'Marriage License Application'],
+    requirements: [
+      'Duly accomplished Certificate of Marriage (Municipal Form No. 97)',
+      'PSA-authenticated birth certificates of both parties',
+      'CENOMAR from PSA (for both parties)',
+      'Community Tax Certificates (Cedula)',
+      'Pre-marriage counseling certificate',
+    ],
+    fee: 'Free (Registration) / ₱50.00 per page (CTC/CRF)',
+    processing: 'Same Day',
+    color: '#7C3B8C',
+  },
+  {
+    id: 'death',
+    icon: '🕊️',
+    title: 'Death Certificate',
+    types: ['On-Time Registration', 'Delayed Registration'],
+    requirements: [
+      'Duly accomplished Certificate of Death (Municipal Form No. 103)',
+      'Medical certificate stating cause of death',
+      'Burial permit',
+      'Affidavit of two disinterested persons (for delayed)',
+    ],
+    fee: 'Free (Registration) / ₱50.00 per page (CTC/CRF)',
+    processing: 'Same Day',
+    color: '#5A6A7E',
+  },
+  {
+    id: 'cenomar',
+    icon: '📋',
+    title: 'CENOMAR',
+    types: ['BREQS — Request', 'BREQS — Claim'],
+    requirements: [
+      'Duly accomplished PSA BREQS request form',
+      'Valid government-issued ID',
+      'Authorization letter (if claiming on behalf of another)',
+      'Payment receipt',
+    ],
+    fee: '₱215.00 per copy',
+    processing: '3–5 working days (BREQS delivery)',
+    color: '#C9973A',
+  },
+  {
+    id: 'ctc',
+    icon: '📄',
+    title: 'CTC / CRF',
+    types: ['CTC of Birth', 'CTC of Marriage', 'CTC of Death', 'CRF 1A/2A/3A', 'CRF 1C/2C/3C'],
+    requirements: [
+      'Request letter or accomplished request form',
+      'Valid government-issued ID of requester',
+      'Authorization letter (if not the document owner)',
+      'Proof of relationship (if requesting for another person)',
+    ],
+    fee: '₱50.00 per page',
+    processing: 'Same Day',
+    color: '#0F5E9C',
+  },
+  {
+    id: 'legal',
+    icon: '⚖️',
+    title: 'Legal Documents',
+    types: ['R.A. 9048 (Correction of Entry)', 'R.A. 10172 (Date/Sex Correction)', 'Legitimation', 'Supplemental Report'],
+    requirements: [
+      'Petition form (available at the MCRO)',
+      'PSA-authenticated copy of the document to be corrected',
+      'Supporting documents proving the error',
+      'Publication fee (for R.A. 9048 corrections)',
+      'Affidavit of Legitimation (for legitimation)',
+    ],
+    fee: '₱3,000.00 – ₱5,000.00 (varies by petition type)',
+    processing: '30–90 days (subject to CRG approval)',
+    color: '#8B1A1A',
+  },
+]
+
+export const RECORDS_ON_FILE = [
+  { year: '1945–1969', birth: '✓', marriage: '✓', death: '✓*' },
+  { year: '1970–1979', birth: '✓', marriage: '✓', death: '✓*' },
+  { year: '1980–1989', birth: '✓', marriage: '✓', death: '✓' },
+  { year: '1990–1999', birth: '✓', marriage: '✓', death: '✓' },
+  { year: '2000–2009', birth: '✓', marriage: '✓', death: '✓' },
+  { year: '2010–2019', birth: '✓', marriage: '✓', death: '✓' },
+  { year: '2020–present', birth: '✓', marriage: '✓', death: '✓' },
+]
+
+export const FAQS = [
+  {
+    q: 'How do I request a copy of my birth certificate?',
+    a: 'Visit the MCRO office with a valid government-issued ID and accomplish the request form. For PSA-authenticated copies, you may also file through the BREQS system available at the MCRO. Processing is same-day for local copies and 3–5 working days for BREQS.',
+  },
+  {
+    q: 'What are the office hours of the MCRO?',
+    a: 'The office is open Monday to Friday, 8:00 AM – 5:00 PM. Transactions are accepted from 8:00 AM to 4:00 PM. The office is closed on weekends and Philippine national holidays.',
+  },
+  {
+    q: 'How much does it cost to get a Certified True Copy (CTC)?',
+    a: 'CTC/CRF copies cost ₱50.00 per page. Registration of civil documents (birth, marriage, death) is free of charge. BREQS requests for PSA copies cost ₱215.00 per copy.',
+  },
+  {
+    q: 'Can someone else pick up my documents?',
+    a: 'Yes. An authorized representative must present: (1) a notarized authorization letter, (2) the document owner\'s valid ID (photocopy), and (3) the representative\'s own valid government-issued ID.',
+  },
+  {
+    q: 'How long does it take to process a delayed registration of birth?',
+    a: 'Delayed registration of birth is processed same day at the local level, but must be transmitted to the Provincial Statistics Office (PSO) and PSA for endorsement. The entire process may take 3–6 months before the PSA-certified copy becomes available.',
+  },
+  {
+    q: 'What is R.A. 9048 and who can file a petition?',
+    a: 'Republic Act 9048 allows administrative correction of clerical or typographical errors in civil registry documents without a court order. The document owner, spouse, children, parents, siblings, or any person authorized by the document owner may file the petition.',
+  },
+]

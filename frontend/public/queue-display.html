@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MCRO Queue Display — General Luna, Quezon</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy: #0f1f3d;
+      --navy-dark: #091529;
+      --gold: #c9973a;
+      --gold-light: #e8b75a;
+      --white: #ffffff;
+      --cream: #faf8f4;
+      --green: #16a34a;
+      --gray-100: #f3f4f6;
+      --gray-300: #d1d5db;
+      --gray-400: #9ca3af;
+      --gray-500: #6b7280;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'DM Sans', sans-serif;
+      background: var(--navy-dark);
+      color: var(--white);
+      overflow: hidden;
+    }
+
+    .display-wrap {
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      height: 100vh;
+      gap: 0;
+    }
+
+    /* Header */
+    .display-header {
+      background: rgba(255,255,255,.04);
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      padding: 18px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .header-seal {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: 2px solid var(--gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(201,151,58,.1);
+    }
+
+    .header-seal span {
+      font-family: 'DM Serif Display', serif;
+      font-size: 18px;
+      color: var(--gold);
+    }
+
+    .header-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 22px;
+      color: var(--white);
+      letter-spacing: .02em;
+    }
+
+    .header-subtitle {
+      font-size: 11px;
+      color: rgba(255,255,255,.4);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+
+    .header-time {
+      text-align: right;
+    }
+
+    .time-value {
+      font-family: 'DM Serif Display', serif;
+      font-size: 32px;
+      color: var(--white);
+      letter-spacing: .04em;
+    }
+
+    .time-date {
+      font-size: 12px;
+      color: rgba(255,255,255,.4);
+      margin-top: 2px;
+    }
+
+    /* Main content */
+    .display-main {
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 0;
+      overflow: hidden;
+    }
+
+    /* Now Serving panel */
+    .serving-panel {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+      position: relative;
+      background: radial-gradient(ellipse 80% 60% at 50% 50%, rgba(201,151,58,.08) 0%, transparent 70%);
+    }
+
+    .serving-label {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .serving-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--gold);
+      box-shadow: 0 0 12px var(--gold);
+      animation: pulse 2s ease infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: .5; transform: scale(0.8); }
+    }
+
+    .serving-number {
+      font-family: 'DM Serif Display', serif;
+      font-size: 220px;
+      line-height: 0.85;
+      color: var(--white);
+      letter-spacing: -.02em;
+      transition: all .4s cubic-bezier(.22,1,.36,1);
+      text-shadow: 0 0 80px rgba(201,151,58,.2);
+    }
+
+    .serving-number.animate-in {
+      animation: numberIn .5s cubic-bezier(.22,1,.36,1);
+    }
+
+    @keyframes numberIn {
+      from { transform: scale(0.7) translateY(30px); opacity: 0; }
+      to { transform: scale(1) translateY(0); opacity: 1; }
+    }
+
+    .serving-empty {
+      font-family: 'DM Serif Display', serif;
+      font-size: 80px;
+      color: rgba(255,255,255,.1);
+      letter-spacing: .1em;
+    }
+
+    .serving-sub {
+      font-size: 16px;
+      color: rgba(255,255,255,.35);
+      margin-top: 24px;
+      letter-spacing: .06em;
+    }
+
+    /* Waiting panel */
+    .waiting-panel {
+      background: rgba(255,255,255,.03);
+      border-left: 1px solid rgba(255,255,255,.07);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .waiting-header {
+      padding: 20px 24px 14px;
+      border-bottom: 1px solid rgba(255,255,255,.07);
+    }
+
+    .waiting-title {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.35);
+    }
+
+    .waiting-count {
+      font-family: 'DM Serif Display', serif;
+      font-size: 28px;
+      color: var(--gold);
+      margin-top: 4px;
+    }
+
+    .waiting-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px 0;
+    }
+
+    .waiting-list::-webkit-scrollbar { width: 4px; }
+    .waiting-list::-webkit-scrollbar-track { background: transparent; }
+    .waiting-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,.1); border-radius: 2px; }
+
+    .waiting-item {
+      display: flex;
+      align-items: center;
+      padding: 12px 24px;
+      gap: 16px;
+      border-bottom: 1px solid rgba(255,255,255,.04);
+      transition: background .2s;
+    }
+
+    .waiting-item:hover {
+      background: rgba(255,255,255,.03);
+    }
+
+    .waiting-pos {
+      font-size: 11px;
+      color: rgba(255,255,255,.25);
+      width: 20px;
+      flex-shrink: 0;
+    }
+
+    .waiting-num {
+      font-family: 'DM Serif Display', serif;
+      font-size: 32px;
+      color: rgba(255,255,255,.7);
+      flex: 1;
+      letter-spacing: .02em;
+    }
+
+    .waiting-time {
+      font-size: 11px;
+      color: rgba(255,255,255,.25);
+    }
+
+    .waiting-empty {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      flex-direction: column;
+      gap: 8px;
+      color: rgba(255,255,255,.15);
+      font-size: 13px;
+    }
+
+    /* Footer */
+    .display-footer {
+      background: rgba(255,255,255,.02);
+      border-top: 1px solid rgba(255,255,255,.06);
+      padding: 12px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .footer-note {
+      font-size: 12px;
+      color: rgba(255,255,255,.25);
+      letter-spacing: .04em;
+    }
+
+    .footer-stats {
+      display: flex;
+      gap: 32px;
+    }
+
+    .footer-stat {
+      text-align: center;
+    }
+
+    .footer-stat-value {
+      font-family: 'DM Serif Display', serif;
+      font-size: 22px;
+      color: rgba(255,255,255,.6);
+    }
+
+    .footer-stat-label {
+      font-size: 10px;
+      color: rgba(255,255,255,.25);
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+
+    /* Grid overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,.012) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.012) 1px, transparent 1px);
+      background-size: 80px 80px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .display-wrap { position: relative; z-index: 1; }
+  </style>
+</head>
+<body>
+  <div class="display-wrap">
+    <!-- Header -->
+    <header class="display-header">
+      <div class="header-brand">
+        <div class="header-seal"><span>M</span></div>
+        <div>
+          <div class="header-title">Municipal Civil Registrar's Office</div>
+          <div class="header-subtitle">General Luna, Quezon — Queue Display</div>
+        </div>
+      </div>
+      <div class="header-time">
+        <div class="time-value" id="clock">--:--:--</div>
+        <div class="time-date" id="dateLine">---</div>
+      </div>
+    </header>
+
+    <!-- Main -->
+    <main class="display-main">
+      <!-- Now Serving -->
+      <section class="serving-panel">
+        <div class="serving-label">
+          <div class="serving-dot"></div>
+          Now Serving
+        </div>
+        <div id="currentNumber" class="serving-number">—</div>
+        <div id="servingSub" class="serving-sub">Waiting for next client…</div>
+      </section>
+
+      <!-- Waiting List -->
+      <aside class="waiting-panel">
+        <div class="waiting-header">
+          <div class="waiting-title">In Queue</div>
+          <div class="waiting-count" id="waitingCount">0 waiting</div>
+        </div>
+        <div class="waiting-list" id="waitingList">
+          <div class="waiting-empty">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" opacity=".3">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+              <circle cx="9" cy="7" r="4"/>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+            <span>No clients waiting</span>
+          </div>
+        </div>
+      </aside>
+    </main>
+
+    <!-- Footer -->
+    <footer class="display-footer">
+      <div class="footer-note">Please wait for your number to be called at the window.</div>
+      <div class="footer-stats">
+        <div class="footer-stat">
+          <div class="footer-stat-value" id="statTotal">0</div>
+          <div class="footer-stat-label">Total Today</div>
+        </div>
+        <div class="footer-stat">
+          <div class="footer-stat-value" id="statServed">0</div>
+          <div class="footer-stat-label">Served</div>
+        </div>
+        <div class="footer-stat">
+          <div class="footer-stat-value" id="statWaiting">0</div>
+          <div class="footer-stat-label">Waiting</div>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // Clock
+    function updateClock() {
+      const now = new Date();
+      document.getElementById('clock').textContent = now.toLocaleTimeString('en-PH', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      document.getElementById('dateLine').textContent = now.toLocaleDateString('en-PH', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    }
+    updateClock();
+    setInterval(updateClock, 1000);
+
+    // Queue polling
+    let prevCurrentNumber = null;
+
+    async function fetchQueue() {
+      try {
+        const res = await fetch('/api/queue');
+        const data = await res.json();
+
+        // Current number
+        const numEl = document.getElementById('currentNumber');
+        const subEl = document.getElementById('servingSub');
+
+        if (data.current) {
+          const numStr = String(data.current.number).padStart(3, '0');
+          if (numStr !== prevCurrentNumber) {
+            numEl.textContent = numStr;
+            numEl.classList.remove('animate-in');
+            void numEl.offsetWidth; // reflow
+            numEl.classList.add('animate-in');
+            prevCurrentNumber = numStr;
+
+            // Flash effect
+            numEl.style.color = '#c9973a';
+            setTimeout(() => { numEl.style.color = '#ffffff'; }, 1200);
+          }
+          subEl.textContent = `Called at ${new Date(data.current.called_at).toLocaleTimeString('en-PH', { hour: '2-digit', minute: '2-digit' })}`;
+        } else {
+          numEl.textContent = '—';
+          numEl.className = 'serving-empty';
+          subEl.textContent = 'Waiting for next client…';
+          prevCurrentNumber = null;
+        }
+
+        // Waiting list
+        const listEl = document.getElementById('waitingList');
+        const countEl = document.getElementById('waitingCount');
+        countEl.textContent = `${data.waiting.length} waiting`;
+
+        if (data.waiting.length === 0) {
+          listEl.innerHTML = `<div class="waiting-empty">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity=".3">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+              <circle cx="9" cy="7" r="4"/>
+            </svg>
+            <span>No clients waiting</span>
+          </div>`;
+        } else {
+          listEl.innerHTML = data.waiting.map((item, i) => `
+            <div class="waiting-item">
+              <span class="waiting-pos">${i + 1}</span>
+              <span class="waiting-num">${String(item.number).padStart(3, '0')}</span>
+              <span class="waiting-time">${new Date(item.created_at).toLocaleTimeString('en-PH', { hour: '2-digit', minute: '2-digit' })}</span>
+            </div>
+          `).join('');
+        }
+
+        // Stats
+        document.getElementById('statTotal').textContent = data.stats.total;
+        document.getElementById('statServed').textContent = data.stats.served;
+        document.getElementById('statWaiting').textContent = data.stats.waiting;
+
+      } catch (err) {
+        console.error('Queue fetch error:', err);
+      }
+    }
+
+    fetchQueue();
+    setInterval(fetchQueue, 2000);
+  </script>
+</body>
+</html>

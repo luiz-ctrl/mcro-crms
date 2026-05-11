@@ -1,0 +1,24 @@
+.layout {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.layout-main {
+  flex: 1;
+  overflow-y: auto;
+  background: var(--cream);
+}
+
+.layout-content {
+  padding: 28px 32px;
+  max-width: 1400px;
+  margin: 0 auto;
+  animation: fadeIn .3s ease both;
+}
+
+@media (max-width: 768px) {
+  .layout-content {
+    padding: 20px 16px;
+  }
+}
