@@ -4,7 +4,7 @@
 -- Users Table
 CREATE TABLE IF NOT EXISTS users (
   id SERIAL PRIMARY KEY,
-  email VARCHAR(255) UNIQUE NOT NULL,
+  username VARCHAR(100) UNIQUE NOT NULL,
   password VARCHAR(255) NOT NULL,
   role VARCHAR(50) NOT NULL DEFAULT 'staff' CHECK (role IN ('admin','staff')),
   created_at TIMESTAMP DEFAULT NOW()
@@ -34,15 +34,15 @@ CREATE TABLE IF NOT EXISTS audit_logs (
 );
 
 -- Admin user
--- Email:    admin@mcro-generaluna.gov.ph
+-- Username:  admin
 -- Password: Admin@2024
-INSERT INTO users (email, password, role)
+INSERT INTO users (username, password, role)
 VALUES (
-  'admin@mcro-generaluna.gov.ph',
+  'admin',
   '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
   'admin'
 )
-ON CONFLICT (email) DO NOTHING;
+ON CONFLICT (username) DO NOTHING;
 
 -- Indexes
 CREATE INDEX IF NOT EXISTS idx_records_status ON records(status);

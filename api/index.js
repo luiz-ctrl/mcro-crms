@@ -161,12 +161,12 @@ export default async function handler(req, res) {
       const { page = 1, limit = 30, search, action } = req.query;
       const offset = (page - 1) * limit;
       let conditions = [], params = [], idx = 1;
-      if (search) { conditions.push(`(al.description ILIKE $${idx} OR u.email ILIKE $${idx})`); params.push(`%${search}%`); idx++; }
+      if (search) { conditions.push(`(al.description ILIKE $${idx} OR u.username ILIKE $${idx})`); params.push(`%${search}%`); idx++; }
       if (action) { conditions.push(`al.action = $${idx++}`); params.push(action); }
       const where = conditions.length ? `WHERE ${conditions.join(' AND ')}` : '';
       const countResult = await query(`SELECT COUNT(*) FROM audit_logs al LEFT JOIN users u ON al.user_id = u.id ${where}`, params);
       params.push(parseInt(limit), offset);
-      const result = await query(`SELECT al.id, al.action, al.description, al.created_at, u.email as user_email FROM audit_logs al LEFT JOIN users u ON al.user_id = u.id ${where} ORDER BY al.created_at DESC LIMIT $${idx} OFFSET $${idx+1}`, params);
+      const result = await query(`SELECT al.id, al.action, al.description, al.created_at, u.username as user_username FROM audit_logs al LEFT JOIN users u ON al.user_id = u.id ${where} ORDER BY al.created_at DESC LIMIT $${idx} OFFSET $${idx+1}`, params);
       return res.status(200).json({ logs: result.rows, total: parseInt(countResult.rows[0].count), page: parseInt(page) });
     } catch (err) { return res.status(500).json({ error: err.message }); }
   }
@@ -299,7 +299,7 @@ export default async function handler(req, res) {
     try {
       const user = authMiddleware(req);
       if (user.role !== 'admin') return res.status(403).json({ error: 'Admin only' });
-      const result = await query('SELECT id, email, role, created_at FROM users ORDER BY created_at ASC');
+      const result = await query('SELECT id, username, role, created_at FROM users ORDER BY created_at ASC');
       return res.status(200).json({ users: result.rows });
     } catch (err) { return res.status(500).json({ error: err.message }); }
   }
@@ -308,14 +308,14 @@ export default async function handler(req, res) {
     try {
       const user = authMiddleware(req);
       if (user.role !== 'admin') return res.status(403).json({ error: 'Admin only' });
-      const { email, password, role } = req.body || {};
-      if (!email || !password) return res.status(400).json({ error: 'Email and password required' });
+      const { username, password, role } = req.body || {};
+      if (!username || !password) return res.status(400).json({ error: 'Username and password required' });
       const hash = await bcrypt.hash(password, 10);
-      const result = await query('INSERT INTO users (email, password, role) VALUES ($1,$2,$3) RETURNING id, email, role, created_at', [email, hash, role || 'staff']);
-      await query('INSERT INTO audit_logs (user_id, action, description) VALUES ($1,$2,$3)', [user.id, 'CREATE', `Created user: ${email}`]);
+      const result = await query('INSERT INTO users (username, password, role) VALUES ($1,$2,$3) RETURNING id, username, role, created_at', [username, hash, role || 'staff']);
+      await query('INSERT INTO audit_logs (user_id, action, description) VALUES ($1,$2,$3)', [user.id, 'CREATE', `Created user: ${username}`]);
       return res.status(201).json(result.rows[0]);
     } catch (err) {
-      if (err.code === '23505') return res.status(400).json({ error: 'Email already exists' });
+      if (err.code === '23505') return res.status(400).json({ error: 'Username already exists' });
       return res.status(500).json({ error: err.message });
     }
   }
@@ -325,13 +325,13 @@ export default async function handler(req, res) {
       const user = authMiddleware(req);
       if (user.role !== 'admin') return res.status(403).json({ error: 'Admin only' });
       const id = parts[1];
-      const { email, password, role } = req.body || {};
+      const { username, password, role } = req.body || {};
       let result;
       if (password) {
         const hash = await bcrypt.hash(password, 10);
-        result = await query('UPDATE users SET email=$1, password=$2, role=$3 WHERE id=$4 RETURNING id, email, role', [email, hash, role, id]);
+        result = await query('UPDATE users SET username=$1, password=$2, role=$3 WHERE id=$4 RETURNING id, username, role', [username, hash, role, id]);
       } else {
-        result = await query('UPDATE users SET email=$1, role=$2 WHERE id=$3 RETURNING id, email, role', [email, role, id]);
+        result = await query('UPDATE users SET username=$1, role=$2 WHERE id=$3 RETURNING id, username, role', [username, role, id]);
       }
       if (result.rows.length === 0) return res.status(404).json({ error: 'User not found' });
       return res.status(200).json(result.rows[0]);
@@ -344,10 +344,10 @@ export default async function handler(req, res) {
       if (user.role !== 'admin') return res.status(403).json({ error: 'Admin only' });
       const id = parts[1];
       if (parseInt(id) === user.id) return res.status(400).json({ error: 'Cannot delete your own account' });
-      const existing = await query('SELECT email FROM users WHERE id=$1', [id]);
+      const existing = await query('SELECT username FROM users WHERE id=$1', [id]);
       if (existing.rows.length === 0) return res.status(404).json({ error: 'User not found' });
       await query('DELETE FROM users WHERE id=$1', [id]);
-      await query('INSERT INTO audit_logs (user_id, action, description) VALUES ($1,$2,$3)', [user.id, 'DELETE', `Deleted user: ${existing.rows[0].email}`]);
+      await query('INSERT INTO audit_logs (user_id, action, description) VALUES ($1,$2,$3)', [user.id, 'DELETE', `Deleted user: ${existing.rows[0].username}`]);
       return res.status(200).json({ message: 'User deleted' });
     } catch (err) { return res.status(500).json({ error: err.message }); }
   }

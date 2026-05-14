@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="apple-touch-icon" href="/logo.png" />
   <title>MCRO Queue Display — General Luna, Quezon</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -31,11 +33,19 @@
       overflow: hidden;
     }
 
+    @media (max-width: 768px) {
+      html, body { overflow-y: auto; height: auto; }
+    }
+
     .display-wrap {
       display: grid;
       grid-template-rows: auto 1fr auto;
       height: 100vh;
       gap: 0;
+    }
+
+    @media (max-width: 768px) {
+      .display-wrap { height: auto; min-height: 100vh; }
     }
 
     /* Header */
@@ -48,27 +58,41 @@
       justify-content: space-between;
     }
 
+    @media (max-width: 768px) {
+      .display-header {
+        padding: 10px 14px;
+        gap: 10px;
+        flex-wrap: nowrap;
+        align-items: center;
+      }
+    }
+
     .header-brand {
       display: flex;
       align-items: center;
       gap: 14px;
+      min-width: 0;
     }
 
     .header-seal {
       width: 48px;
       height: 48px;
+      flex-shrink: 0;
       border-radius: 50%;
       border: 2px solid var(--gold);
+      overflow: hidden;
+      background: white;
+      box-shadow: 0 0 0 4px rgba(201,151,58,.12);
       display: flex;
       align-items: center;
       justify-content: center;
-      background: rgba(201,151,58,.1);
     }
 
-    .header-seal span {
-      font-family: 'DM Serif Display', serif;
-      font-size: 18px;
-      color: var(--gold);
+    .header-seal img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      border-radius: 50%;
     }
 
     .header-title {
@@ -76,6 +100,9 @@
       font-size: 22px;
       color: var(--white);
       letter-spacing: .02em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .header-subtitle {
@@ -84,10 +111,21 @@
       letter-spacing: .08em;
       text-transform: uppercase;
       margin-top: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    @media (max-width: 768px) {
+      .header-brand { gap: 8px; }
+      .header-seal { width: 32px; height: 32px; }
+      .header-title { font-size: 13px; }
+      .header-subtitle { font-size: 9px; }
     }
 
     .header-time {
       text-align: right;
+      flex-shrink: 0;
     }
 
     .time-value {
@@ -103,12 +141,25 @@
       margin-top: 2px;
     }
 
+    @media (max-width: 768px) {
+      .time-value { font-size: 18px; }
+      .time-date { display: none; }
+    }
+
     /* Main content */
     .display-main {
       display: grid;
       grid-template-columns: 1fr 380px;
       gap: 0;
       overflow: hidden;
+    }
+
+    @media (max-width: 768px) {
+      .display-main {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto;
+        overflow: visible;
+      }
     }
 
     /* Now Serving panel */
@@ -181,6 +232,17 @@
       letter-spacing: .06em;
     }
 
+    @media (max-width: 768px) {
+      .serving-panel {
+        padding: 28px 16px 24px;
+        border-bottom: 1px solid rgba(255,255,255,.07);
+      }
+      .serving-number { font-size: clamp(90px, 38vw, 160px); }
+      .serving-empty  { font-size: clamp(60px, 24vw, 90px); }
+      .serving-sub    { font-size: 13px; margin-top: 14px; text-align: center; }
+      .serving-label  { font-size: 11px; margin-bottom: 14px; }
+    }
+
     /* Waiting panel */
     .waiting-panel {
       background: rgba(255,255,255,.03);
@@ -188,6 +250,14 @@
       display: flex;
       flex-direction: column;
       overflow: hidden;
+    }
+
+    @media (max-width: 768px) {
+      .waiting-panel {
+        border-left: none;
+        border-top: 1px solid rgba(255,255,255,.07);
+        max-height: 280px;
+      }
     }
 
     .waiting-header {
@@ -302,6 +372,19 @@
       text-transform: uppercase;
     }
 
+    @media (max-width: 768px) {
+      .display-footer {
+        padding: 10px 14px;
+        flex-direction: column;
+        gap: 8px;
+        text-align: center;
+      }
+      .footer-note { font-size: 10px; }
+      .footer-stats { gap: 20px; }
+      .footer-stat-value { font-size: 18px; }
+      .footer-stat-label { font-size: 9px; }
+    }
+
     /* Grid overlay */
     body::before {
       content: '';
@@ -323,7 +406,7 @@
     <!-- Header -->
     <header class="display-header">
       <div class="header-brand">
-        <div class="header-seal"><span>M</span></div>
+        <div class="header-seal"><img src="/logo.png" alt="MCRO Logo" /></div>
         <div>
           <div class="header-title">Municipal Civil Registrar's Office</div>
           <div class="header-subtitle">General Luna, Quezon — Queue Display</div>

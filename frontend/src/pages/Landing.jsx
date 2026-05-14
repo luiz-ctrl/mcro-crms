@@ -1,95 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import './Landing.css';
 
-/* ── MCR-themed Loading Screen ─────────────────────────────── */
-function MCRLoader({ onDone }) {
-  const [phase, setPhase] = useState(0);
-  // phase 0 = document drawing in, phase 1 = stamp drops, phase 2 = fade out
 
-  useEffect(() => {
-    const t1 = setTimeout(() => setPhase(1), 2600); // stamp drops
-    const t2 = setTimeout(() => setPhase(2), 3600); // fade out starts
-    const t3 = setTimeout(() => onDone(),    4200); // unmount loader
-    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
-  }, [onDone]);
-
-  return (
-    <div className={`mcr-loader${phase === 2 ? ' mcr-loader-exit' : ''}`} role="status" aria-label="Loading MCRO portal">
-      <div className="mcr-loader-bg" />
-
-      {/* Floating civil registry document */}
-      <div className={`mcr-doc${phase >= 1 ? ' mcr-doc-stamped' : ''}`}>
-
-        {/* Document header */}
-        <div className="mcr-doc-header">
-          <div className="mcr-doc-seal">
-            <div className="mcr-doc-seal-ring" />
-            <div className="mcr-doc-seal-inner">
-              <span className="mcr-doc-seal-ph" aria-hidden="true">🇵🇭</span>
-            </div>
-          </div>
-          <div className="mcr-doc-header-text">
-            <div className="mcr-doc-title-line">Republic of the Philippines</div>
-            <div className="mcr-doc-subtitle-line">Municipal Civil Registrar's Office</div>
-            <div className="mcr-doc-loc-line">General Luna, Quezon</div>
-          </div>
-        </div>
-
-        {/* Animated content lines */}
-        <div className="mcr-doc-body">
-          {[80, 100, 60, 90, 70, 55, 85].map((w, i) => (
-            <div key={i} className="mcr-doc-line"
-              style={{ width: `${w}%`, animationDelay: `${i * 0.09}s` }} />
-          ))}
-          <div className="mcr-doc-divider" />
-          {[65, 90, 75].map((w, i) => (
-            <div key={i + 10} className="mcr-doc-line mcr-doc-line-sm"
-              style={{ width: `${w}%`, animationDelay: `${(i + 7) * 0.09}s` }} />
-          ))}
-        </div>
-
-        {/* Signature row */}
-        <div className="mcr-doc-sig-row">
-          <div className="mcr-doc-sig-line" />
-          <div className="mcr-doc-sig-label">Civil Registrar</div>
-        </div>
-
-        {/* OFFICIAL STAMP — drops on phase 1 */}
-        <div className={`mcr-stamp${phase >= 1 ? ' mcr-stamp-drop' : ''}`} aria-hidden="true">
-          <div className="mcr-stamp-ring">
-            <div className="mcr-stamp-inner">
-              <div className="mcr-stamp-top">MCRO</div>
-              <div className="mcr-stamp-star">★</div>
-              <div className="mcr-stamp-bottom">OFFICIAL</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Loading label */}
-      <div className="mcr-loader-label">
-        <span className="mcr-loader-office">Municipal Civil Registrar's Office</span>
-        <span className="mcr-loader-dots" aria-hidden="true">
-          <span /><span /><span />
-        </span>
-      </div>
-    </div>
-  );
-}
-
-function Clock() {
-  const [time, setTime] = useState(new Date());
-  useEffect(() => {
-    const t = setInterval(() => setTime(new Date()), 1000);
-    return () => clearInterval(t);
-  }, []);
-  return (
-    <div className="landing-clock">
-      <div className="clock-time">{time.toLocaleTimeString('en-PH', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</div>
-      <div className="clock-date">{time.toLocaleDateString('en-PH', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</div>
-    </div>
-  );
-}
 
 function QueueDisplay({ mini = false }) {
   const [state, setState] = useState({ current: null, waiting: [], stats: { total: 0, served: 0, waiting: 0 } });
@@ -222,87 +134,6 @@ function QueueDisplay({ mini = false }) {
   );
 }
 
-const PH_HOLIDAYS_2025 = [
-  '2025-01-01','2025-02-25','2025-04-09','2025-04-17','2025-04-18',
-  '2025-05-01','2025-06-12','2025-08-21','2025-08-25','2025-11-01',
-  '2025-11-30','2025-12-08','2025-12-25','2025-12-30','2025-12-31',
-];
-const PH_HOLIDAYS_2026 = [
-  '2026-01-01', // New Year's Day
-  '2026-04-02', // Holy Thursday (Maundy Thursday)
-  '2026-04-03', // Good Friday
-  '2026-04-04', // Black Saturday (special non-working)
-  '2026-04-09', // Araw ng Kagitingan (Day of Valor)
-  '2026-05-01', // Labor Day
-  '2026-06-12', // Independence Day
-  '2026-08-21', // Ninoy Aquino Day
-  '2026-08-31', // National Heroes Day (last Monday of August)
-  '2026-11-01', // All Saints' Day
-  '2026-11-30', // Bonifacio Day
-  '2026-12-08', // Feast of the Immaculate Conception
-  '2026-12-25', // Christmas Day
-  '2026-12-30', // Rizal Day
-  '2026-12-31', // New Year's Eve (special non-working)
-];
-const ALL_HOLIDAYS = [...PH_HOLIDAYS_2025, ...PH_HOLIDAYS_2026];
-
-function OfficeStatusBanner() {
-  const [status, setStatus] = useState(null);
-  useEffect(() => {
-    const compute = () => {
-      const now = new Date();
-      // Use local date (not UTC) so PH timezone (UTC+8) is correctly evaluated
-      const dateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
-      const day = now.getDay();
-      const hour = now.getHours();
-      const min = now.getMinutes();
-      const isHoliday = ALL_HOLIDAYS.includes(dateStr);
-      const isWeekend = day === 0 || day === 5 || day === 6;
-      const afterOpen = hour >= 7;
-      const beforeClose = hour < 17;
-      if (isHoliday) {
-        setStatus({ type: 'holiday', label: 'Holiday today — office closed', sub: 'Reopens next working day at 7:00 AM' });
-      } else if (isWeekend) {
-        const daysUntilMon = day === 6 ? 2 : day === 5 ? 3 : 1;
-        const mon = new Date(now);
-        mon.setDate(now.getDate() + daysUntilMon);
-        const monStr = mon.toLocaleDateString('en-PH', { weekday: 'long', month: 'long', day: 'numeric' });
-        setStatus({ type: 'closed', label: 'Closed today', sub: `Reopens ${monStr} at 7:00 AM` });
-      } else if (afterOpen && beforeClose) {
-        const closeTime = new Date(now);
-        closeTime.setHours(17, 0, 0, 0);
-        const minsLeft = Math.round((closeTime - now) / 60000);
-        const hLeft = Math.floor(minsLeft / 60);
-        const mLeft = minsLeft % 60;
-        const timeLeft = hLeft > 0 ? `${hLeft}h ${mLeft}m` : `${mLeft} min`;
-        setStatus({ type: 'open', label: 'Open now', sub: `Closes in ${timeLeft} · 5:00 PM today` });
-      } else if (hour < 8) {
-        const openTime = new Date(now);
-        openTime.setHours(8, 0, 0, 0);
-        const minsUntil = Math.round((openTime - now) / 60000);
-        setStatus({ type: 'soon', label: 'Opening soon', sub: `Opens in ${minsUntil} min at 7:00 AM` });
-      } else {
-        
-        const tomorrow = new Date(now);
-        tomorrow.setDate(now.getDate() + 1);
-        const tStr = tomorrow.toLocaleDateString('en-PH', { weekday: 'long', month: 'long', day: 'numeric' });
-        setStatus({ type: 'closed', label: 'Closed for today', sub: `Reopens ${tStr} at 7:00 AM` });
-      }
-    };
-    compute();
-    const t = setInterval(compute, 60000);
-    return () => clearInterval(t);
-  }, []);
-  if (!status) return null;
-  return (
-    <div className={`office-status-banner office-status-${status.type}`} role="status" aria-live="polite">
-      <span className={`office-status-dot office-dot-${status.type}`} />
-      <span className="office-status-label">{status.label}</span>
-      <span className="office-status-sep">·</span>
-      <span className="office-status-sub">{status.sub}</span>
-    </div>
-  );
-}
 
 function AnnouncementBanner() {
   const [announcement, setAnnouncement] = useState(null);
@@ -1227,27 +1058,6 @@ const smoothScrollTo = (id) => {
 };
 
 /* ── Live open/closed badge ─────────────────────────────────── */
-function OfficeStatusBadge() {
-  const [isOpen, setIsOpen] = useState(false);
-  useEffect(() => {
-    const check = () => {
-      const now = new Date();
-      const day = now.getDay();
-      const hour = now.getHours();
-      setIsOpen(day >= 1 && day <= 4 && hour >= 7 && hour < 17);
-    };
-    check();
-    const t = setInterval(check, 60000);
-    return () => clearInterval(t);
-  }, []);
-  return (
-    <span className={`contact-status-badge ${isOpen ? 'contact-badge-open' : 'contact-badge-closed'}`}>
-      <span className="contact-badge-dot" />
-      {isOpen ? 'Open Now' : 'Closed'}
-    </span>
-  );
-}
-
 /* ── Copy address button ────────────────────────────────────── */
 function ContactCopyButton() {
   const [copied, setCopied] = useState(false);
@@ -1267,7 +1077,6 @@ function ContactCopyButton() {
 }
 
 export default function Landing() {
-  const [isLoading, setIsLoading] = useState(true);
   const [openReq, setOpenReq] = useState(null);
   const [openFaq, setOpenFaq] = useState(null);
   const [selectedService, setSelectedService] = useState(null);
@@ -1275,6 +1084,17 @@ export default function Landing() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [estimatorGoal, setEstimatorGoal] = useState(null);
   const [selectedFrontline, setSelectedFrontline] = useState(null);
+
+  // Secret keyboard shortcut: Ctrl + Shift + A → Staff Portal
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.ctrlKey && e.shiftKey && e.key === 'A') {
+        window.location.href = '/login?key=login';
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   const services = [
     {
@@ -1567,60 +1387,63 @@ export default function Landing() {
 
   return (
     <>
-      {isLoading && <MCRLoader onDone={() => setIsLoading(false)} />}
-      <div className="landing-page" aria-hidden={isLoading}>
+      <div className="landing-page">
       <a href="#services" className="skip-link" onClick={e => { e.preventDefault(); smoothScrollTo('services'); }}>Skip to main content</a>
       <div className="landing-bg" />
-
-      {/* Office Status */}
-      <OfficeStatusBanner />
 
       {/* Announcement */}
       <AnnouncementBanner />
 
       {/* Header */}
       <header className="landing-header">
+        {/* Top utility bar */}
+        <div className="landing-header-topbar">
+          <div className="landing-header-topbar-inner">
+            <span className="landing-topbar-label">Republic of the Philippines</span>
+            <span className="landing-topbar-sep">·</span>
+            <span className="landing-topbar-label">General Luna, Quezon</span>
+          </div>
+        </div>
+
+        {/* Main header row */}
         <div className="landing-header-inner">
           <div className="landing-brand">
             <div className="landing-logo-ring">
               <img src="/logo.png" alt="MCRO Logo" style={{ width: '100%', height: '100%', objectFit: 'contain', borderRadius: '50%' }} />
             </div>
-            <div>
-              <div className="landing-brand-name">Municipal Civil Registrar's Office</div>
+            <div className="landing-brand-text">
+              <div className="landing-brand-name">MUNICIPAL REGISTRARS OFFICE</div>
               <div className="landing-brand-loc">General Luna, Quezon</div>
             </div>
           </div>
 
           {/* Desktop nav */}
           <nav className="landing-nav">
-            <button onClick={() => smoothScrollTo('services')}     className="landing-nav-link">Services</button>
-            <button onClick={() => smoothScrollTo('records')}      className="landing-nav-link">Records</button>
-            <button onClick={() => smoothScrollTo('faq')}          className="landing-nav-link">FAQ</button>
-            <button onClick={() => smoothScrollTo('orgchart')}      className="landing-nav-link">Our Team</button>
-            <button onClick={() => smoothScrollTo('contact')}      className="landing-nav-link landing-nav-cta">Contact</button>
+            <button onClick={() => smoothScrollTo('services')}  className="landing-nav-link">Services</button>
+            <button onClick={() => smoothScrollTo('records')}   className="landing-nav-link">Records</button>
+            <button onClick={() => smoothScrollTo('faq')}       className="landing-nav-link">FAQ</button>
+            <button onClick={() => smoothScrollTo('orgchart')}  className="landing-nav-link">Our Team</button>
+            <button onClick={() => smoothScrollTo('contact')}   className="landing-nav-link landing-nav-cta">Contact</button>
           </nav>
 
-          <div className="landing-header-right">
-            <Clock />
-            {/* Mobile hamburger */}
-            <button
-              className="landing-nav-hamburger"
-              aria-label="Toggle navigation menu"
-              aria-expanded={menuOpen}
-              aria-controls="mobile-menu"
-              onClick={() => setMenuOpen(o => !o)}
-            >
-              <span /><span /><span />
-            </button>
-          </div>
+          {/* Mobile hamburger */}
+          <button
+            className="landing-nav-hamburger"
+            aria-label="Toggle navigation menu"
+            aria-expanded={menuOpen}
+            aria-controls="mobile-menu"
+            onClick={() => setMenuOpen(o => !o)}
+          >
+            <span /><span /><span />
+          </button>
         </div>
 
         {/* Mobile dropdown menu */}
         <div id="mobile-menu" className={`landing-mobile-menu${menuOpen ? ' open' : ''}`} role="navigation" aria-label="Mobile navigation">
-          <button className="landing-mobile-link" onClick={() => { smoothScrollTo('services');     setMenuOpen(false); }}>Services</button>
-          <button className="landing-mobile-link" onClick={() => { smoothScrollTo('records');      setMenuOpen(false); }}>Records</button>
-          <button className="landing-mobile-link" onClick={() => { smoothScrollTo('faq');          setMenuOpen(false); }}>FAQ</button>
-          <button className="landing-mobile-link" onClick={() => { smoothScrollTo('orgchart');     setMenuOpen(false); }}>Our Team</button>
+          <button className="landing-mobile-link" onClick={() => { smoothScrollTo('services');  setMenuOpen(false); }}>Services</button>
+          <button className="landing-mobile-link" onClick={() => { smoothScrollTo('records');   setMenuOpen(false); }}>Records</button>
+          <button className="landing-mobile-link" onClick={() => { smoothScrollTo('faq');       setMenuOpen(false); }}>FAQ</button>
+          <button className="landing-mobile-link" onClick={() => { smoothScrollTo('orgchart');  setMenuOpen(false); }}>Our Team</button>
           <button className="landing-mobile-link landing-mobile-cta" onClick={() => { smoothScrollTo('contact'); setMenuOpen(false); }}>Contact</button>
         </div>
       </header>
@@ -1947,7 +1770,6 @@ export default function Landing() {
                   <div className="contact-info-label">Office Hours</div>
                   <div className="contact-info-val">Mon – Thurs, 7:00 AM – 5:00 PM</div>
                   <div className="contact-hours-row">
-                    <OfficeStatusBadge />
                     <span className="contact-hours-sub">Fri – Sun: Closed</span>
                   </div>
                 </div>
@@ -2083,9 +1905,6 @@ export default function Landing() {
         {/* Bottom bar */}
         <div className="footer-bottom">
           <span className="footer-copy">© {new Date().getFullYear()} Municipal Civil Registrar's Office · All rights reserved</span>
-          <a href="/login?key=login" className="footer-staff-link" aria-label="Staff portal">
-            Staff Portal
-          </a>
           <div className="footer-affiliations">
             <a href="https://psa.gov.ph" target="_blank" rel="noopener noreferrer" className="footer-aff-badge footer-aff-link">PSA</a>
             <a href="https://philsys.gov.ph" target="_blank" rel="noopener noreferrer" className="footer-aff-badge footer-aff-link">PhilSys</a>
